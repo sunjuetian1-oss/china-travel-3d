@@ -16,8 +16,11 @@ export default function ChinaMap3D() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
-      .then((res) => res.json())
+    fetch('https://cdn.jsdelivr.net/gh/aliyun/datav-geo-atlas@master/areas_v3/bound/100000_full.json')
+      .then((res) => {
+        if (!res.ok) throw new Error('Network error')
+        return res.json()
+      })
       .then((data) => {
         setFeatures(data.features || [])
         setLoading(false)
@@ -44,7 +47,13 @@ export default function ChinaMap3D() {
       <div className="w-full h-screen flex items-center justify-center bg-black text-white">
         <div className="text-center">
           <div className="text-2xl mb-4 text-red-400">❌ 地图数据加载失败</div>
-          <div className="text-zinc-400">请刷新页面重试</div>
+          <div className="text-zinc-400 mb-4">网络连接异常，请刷新页面重试</div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 transition-colors"
+          >
+            刷新页面
+          </button>
         </div>
       </div>
     )
