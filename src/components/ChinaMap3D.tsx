@@ -16,16 +16,17 @@ export default function ChinaMap3D() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch('https://cdn.jsdelivr.net/gh/aliyun/datav-geo-atlas@master/areas_v3/bound/100000_full.json')
+    fetch('https://cdn.jsdelivr.net/npm/echarts@5.4.3/map/json/china.json')
       .then((res) => {
-        if (!res.ok) throw new Error('Network error')
+        if (!res.ok) throw new Error('status ' + res.status)
         return res.json()
       })
       .then((data) => {
         setFeatures(data.features || [])
         setLoading(false)
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('地图加载失败:', err)
         setError(true)
         setLoading(false)
       })
@@ -45,10 +46,14 @@ export default function ChinaMap3D() {
   if (error) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-black text-white">
-        <div className="text-center">
+        <div className="text-center max-w-md px-6">
           <div className="text-2xl mb-4 text-red-400">❌ 地图数据加载失败</div>
-          <div className="text-zinc-400 mb-4">网络连接异常，请刷新页面重试</div>
-          <button 
+          <div className="text-zinc-400 mb-6">
+            网络连接异常，可能是 CDN 访问受限。
+            <br />
+            请刷新页面重试，或联系提供者排查。
+          </div>
+          <button
             onClick={() => window.location.reload()}
             className="px-6 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 transition-colors"
           >
